@@ -31,7 +31,7 @@ public class Server {
 		System.out.println(recv.getType());
 		
 		//return message
-		Request snd = new TestMessage(1,"bye");
+		Request snd = new TestMessage("bye");
 		
 		os.writeObject(snd);
 		

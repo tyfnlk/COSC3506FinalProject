@@ -24,7 +24,7 @@ public class Client {
 		
 		//create request to send
 		
-		Request msg = new TestMessage(1, "hello from client");
+		Request msg = new TestMessage( "hello from client");
 		
 		os.writeObject(msg);
 		

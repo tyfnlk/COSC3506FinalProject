@@ -6,6 +6,7 @@ public class test {
 		System.out.println(t1.getMessage());
 		System.out.println(t1.getType());
 		
+		
 	}
 
 }
