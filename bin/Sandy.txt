@@ -1,0 +1,5 @@
+Sandy: Hello!
+Randy: Hi!
+Sandy: How are you doing?
+Randy: Good, do you want to meet at 3:00 PM today?
+Sandy: Sure see you then!
