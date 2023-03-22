@@ -29,7 +29,7 @@ public class ClientMulti {
 	
 	public void sendMessage() {
 		try {
-			bufferedWriter.write(this.username);
+			bufferedWriter.write(username,0, username.length());
 			bufferedWriter.newLine();
 			bufferedWriter.flush();
 			
