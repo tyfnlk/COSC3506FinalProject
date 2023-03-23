@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -11,8 +13,10 @@ public class ClientMulti {
 	//datamembers
 	
 	private Socket socket;
-	private BufferedReader bufferedReader;
-	private BufferedWriter bufferedWriter;
+	//receive data
+	private ObjectInputStream objectInputStream;
+	//send data
+	private ObjectOutputStream objectOutputStream;
 	public String username;
 	
 	//constructor
@@ -29,7 +33,7 @@ public class ClientMulti {
 	}
 	
 	@SuppressWarnings("resource")
-	public void sendMessage() {
+	public void sendRequest() {
 		try {
 			bufferedWriter.write(username);
 			bufferedWriter.newLine();
@@ -51,15 +55,15 @@ public class ClientMulti {
 		}
 		
 	}
-	public void listenForMessage() {
+	public void listenForRequest() {
 		//needs to be a thread to prevent blocking
 		new Thread(new Runnable() {
 			public void run() {
-				String msgFromGroupChat;
+				Request request;
 				
 				while(socket.isConnected()) {
 					try {
-						msgFromGroupChat = bufferedReader.readLine();
+						request = (Request) bufferedReader.readLine();
 						System.out.println(msgFromGroupChat);
 					}catch(IOException e) {
 						closeEverything(socket, bufferedReader, bufferedWriter);
@@ -97,9 +101,9 @@ public class ClientMulti {
 		//create client object
 		ClientMulti clientMulti = new ClientMulti(socket, username);
 		//run listening thread
-		clientMulti.listenForMessage();
+		clientMulti.listenForRequest();
 		//run sending thread
-		clientMulti.sendMessage();
+		clientMulti.sendRequest();
 	}
 }
 

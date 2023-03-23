@@ -9,11 +9,12 @@ public class TestMessage extends Request{
 	
 	//default constructor sets request type to 0 = null
 	public TestMessage() {
-		super(0);
+		super(null);
 	}
+	//constructor with parameters
 	public TestMessage(String message) {
-		//default set request type to 1 (1 = test message)
-		super(1);
+		//default set request type to "testMessage" == make same as class name
+		super("TestMessage");
 		this.message = message;
 	}
 	public String getMessage() {

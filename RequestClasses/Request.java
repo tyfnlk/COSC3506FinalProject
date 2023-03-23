@@ -8,7 +8,7 @@ public class Request implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int requestType;
+	private String requestType;
 	/*
 	 * 0 = empty
 	 * 1 = message
@@ -21,14 +21,14 @@ public class Request implements Serializable{
 	 */
 	
 	//constructors
-	public Request(int requestType) {
+	public Request(String requestType) {
 		this.requestType = requestType;
 	}
 	
 	
 	
 	//methods
-	public int getType() {
+	public String getType() {
 		return this.requestType;
 	}
 

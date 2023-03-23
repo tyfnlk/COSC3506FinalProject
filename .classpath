@@ -9,5 +9,6 @@
 	<classpathentry kind="src" path="multiclienttesting"/>
 	<classpathentry kind="src" path="MultiClientSerialiable testing"/>
 	<classpathentry kind="src" path="UI"/>
+	<classpathentry kind="src" path="RequestClasses"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -22,16 +22,21 @@ public class ClientHandler implements Runnable{
 	
 	
 	//constructor
-	public ClientHandler(Socket socket) {
+	public ClientHandler(Socket socket) throws Exception {
 		try {
 			this.socket = socket;
 			
 			//buffered writer to increase efficiency (possibly just buffer the object output stream)
 			
-			this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream()));
+			this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 			
-			this.objectInputStream = new ObjectInputStream(socket.getInputStream()));
-			this.clientusername = objectInputStream.readObject();
+			this.objectInputStream = new ObjectInputStream(socket.getInputStream());
+
+			Request req= (Request)objectInputStream.readObject();
+			
+		//authenticate login
+		//then add user to lis
+			
 			clientHandlers.add(this);
 			broadcastMessage("server: <" + clientusername + "> has entered the chat room");
 		}catch(IOException e) {
@@ -86,16 +91,16 @@ public class ClientHandler implements Runnable{
 		return this.clientusername;
 	}
 	
-	public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+	public void closeEverything(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
 		removeClientHandler();
 		//closing bufferd... closes all readers/writers nested\
 		//closing socket closes all socket inputs/outputs
 		try {
-			if(bufferedReader != null) {
-				bufferedReader.close();
+			if(objectOutputStream != null) {
+				objectOutputStream.close();
 			}
-			if(bufferedWriter != null) {
-				bufferedWriter.close();
+			if(objectInputStream != null) {
+				objectInputStream.close();
 			}
 			if(socket != null) {
 				socket.close();
