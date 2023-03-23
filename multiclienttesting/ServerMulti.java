@@ -43,7 +43,7 @@ public class ServerMulti {
 	}
 	public static void main(String[] args) throws IOException {
 		ServerSocket ss = new ServerSocket(1234);
-		ServerMulti server = new ServerMulti(ss);
+		MainServer server = new MainServer(ss);
 		System.out.println("multi server running");
 		server.startServer();
 		

@@ -13,9 +13,9 @@ public class ClientHandler implements Runnable{
 	public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 	private Socket socket;
 	//get data
-	private BufferedReader bufferedReader;
+	BufferedReader bufferedReader;
 	//send data
-	private BufferedWriter bufferedWriter;
+	 BufferedWriter bufferedWriter;
 	private String clientusername;
 	
 	
@@ -47,7 +47,7 @@ public class ClientHandler implements Runnable{
 		//blocking operation
 		String messageFromClient;
 		
-		//while socket is connected , listen for message
+		//while socket is connected , send messages typed
 		while(socket.isConnected()) {
 			try {
 				messageFromClient = bufferedReader.readLine();

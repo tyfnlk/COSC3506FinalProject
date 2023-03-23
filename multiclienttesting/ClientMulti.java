@@ -95,11 +95,11 @@ public class ClientMulti {
 		
 		Socket socket = new Socket ("localhost", 1234);
 		//create client object
-		ClientMulti clientMulti = new ClientMulti(socket, username);
+		MainClient mainClient = new MainClient(socket, username);
 		//run listening thread
-		clientMulti.listenForMessage();
+		mainClient.listenForMessage();
 		//run sending thread
-		clientMulti.sendMessage();
+		mainClient.sendMessage();
 	}
 }
 

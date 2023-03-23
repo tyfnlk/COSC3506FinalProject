@@ -2,28 +2,27 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerMulti {
+public class MainServer {
 	//data
 	
 	private ServerSocket ss;
 	
 	//constructor
 	
-	public ServerMulti(ServerSocket ss) {
+	public MainServer(ServerSocket ss) {
 		this.ss = ss;
 	}
 	//methods
-	public void startServer() {
+	public void startServer() throws Exception {
 		try {
 			while(!ss.isClosed()) {
 				Socket socket = ss.accept();
 				
+				MainClientHandler mainClientHandler = new MainClientHandler(socket);
 				
-				ClientHandler clientHandler = new ClientHandler(socket);
+				System.out.println("A new client has connected!"+ mainClientHandler.getClientUsername());
 				
-				System.out.println("A new client has connected!"+ clientHandler.getClientUsername());
-				
-				Thread thread = new Thread(clientHandler);
+				Thread thread = new Thread(mainClientHandler);
 				thread.start();
 			}
 		}catch(IOException e) {
@@ -44,7 +43,7 @@ public class ServerMulti {
 	public static void main(String[] args) throws IOException {
 		ServerSocket ss = new ServerSocket(1234);
 		ServerMulti server = new ServerMulti(ss);
-		System.out.println("multi server running");
+		System.out.println("main server running");
 		server.startServer();
 		
 	}

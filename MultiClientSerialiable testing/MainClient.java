@@ -1,15 +1,11 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class ClientMulti {
+public class MainClient {
 	//datamembers
 	
 	private Socket socket;
@@ -20,14 +16,14 @@ public class ClientMulti {
 	public String username;
 	
 	//constructor
-	public ClientMulti(Socket socket, String username) {
+	public MainClient(Socket socket, String username) {
 		this.username=username;
 		try {
 			this.socket = socket;
-			this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+			this.objectInputStream = new ObjectInputStream(socket.getInputStream());
 		}catch(IOException e) {
-			closeEverything(socket, bufferedReader, bufferedWriter);
+			closeEverything(socket, objectOutputStream, objectInputStream);
 			
 		}
 	}
@@ -35,23 +31,26 @@ public class ClientMulti {
 	@SuppressWarnings("resource")
 	public void sendRequest() {
 		try {
-			bufferedWriter.write(username);
-			bufferedWriter.newLine();
-			bufferedWriter.flush();
+			objectOutputStream.writeObject(new TestMessage("messages from client"));
+			//bufferedWriter.write(username);
+			//bufferedWriter.newLine();
+			//bufferedWriter.flush();
 			
 			Scanner scanner = new Scanner(System.in);
 			
 			while(socket.isConnected()) {
 				String messageToSend = scanner.nextLine();
 				
-				bufferedWriter.write(this.username +": " + messageToSend);
-				bufferedWriter.newLine();
-				bufferedWriter.flush();
+				objectOutputStream.writeObject(new TestMessage(messageToSend));
+				
+				//bufferedWriter.write(this.username +": " + messageToSend);
+				//bufferedWriter.newLine();
+				//bufferedWriter.flush();
 
 			}
 				
 		}catch(IOException e) {
-				closeEverything(socket, bufferedReader, bufferedWriter);
+				closeEverything(socket, objectOutputStream, objectInputStream);
 		}
 		
 	}
@@ -63,10 +62,10 @@ public class ClientMulti {
 				
 				while(socket.isConnected()) {
 					try {
-						request = (Request) bufferedReader.readLine();
-						System.out.println(msgFromGroupChat);
-					}catch(IOException e) {
-						closeEverything(socket, bufferedReader, bufferedWriter);
+						request = (Request) objectInputStream.readObject();
+						System.out.println(request.getType());
+					}catch(IOException | ClassNotFoundException e) {
+						closeEverything(socket, objectOutputStream, objectInputStream);
 						
 					}
 					
@@ -75,13 +74,13 @@ public class ClientMulti {
 		}).start();
 	}
 	
-	public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+	public void closeEverything(Socket socket, ObjectOutputStream objectOutputStream, ObjectInputStream objectInputStream) {
 		try {
-			if(bufferedReader != null) {
-				bufferedReader.close();
+			if(objectOutputStream != null) {
+				objectOutputStream.close();
 			}
-			if(bufferedWriter != null) {
-				bufferedWriter.close();
+			if(objectInputStream != null) {
+				objectInputStream.close();
 			}
 			if(socket != null) {
 				socket.close();
@@ -93,17 +92,18 @@ public class ClientMulti {
 	}
 	
 	public static void main(String[] args) throws UnknownHostException, IOException {
+		@SuppressWarnings("resource")
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter username: ");
 		String username = scan.nextLine();
 		
 		Socket socket = new Socket ("localhost", 1234);
 		//create client object
-		ClientMulti clientMulti = new ClientMulti(socket, username);
+		MainClient mainClient = new MainClient(socket, username);
 		//run listening thread
-		clientMulti.listenForRequest();
+		mainClient.listenForRequest();
 		//run sending thread
-		clientMulti.sendRequest();
+		mainClient.sendRequest();
 	}
 }
 

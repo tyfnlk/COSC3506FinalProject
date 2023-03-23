@@ -1,28 +1,24 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ClientHandler implements Runnable{
+public class MainClientHandler implements Runnable{
 //datamembers
 	
 	//static array list of all clients
-	public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+	public static ArrayList<MainClientHandler> clientHandlers = new ArrayList<>();
 	private Socket socket;
 	//get data
 	private ObjectInputStream objectInputStream;
 	//send data
 	private ObjectOutputStream objectOutputStream;
-	private String clientusername;
+	String clientusername;
 	
 	
 	//constructor
-	public ClientHandler(Socket socket) throws Exception {
+	public MainClientHandler(Socket socket) throws Exception {
 		try {
 			this.socket = socket;
 			
@@ -32,7 +28,7 @@ public class ClientHandler implements Runnable{
 			
 			this.objectInputStream = new ObjectInputStream(socket.getInputStream());
 
-			Request req= (Request)objectInputStream.readObject();
+			//Request req= (Request)objectInputStream.readObject();
 			
 		//authenticate login
 		//then add user to lis
@@ -51,30 +47,63 @@ public class ClientHandler implements Runnable{
 		// TODO Auto-generated method stub
 		//run on separate thread
 		//blocking operation
-		String messageFromClient;
 		
-		//while socket is connected , listen for message
+		//while socket is connected , send requests
 		while(socket.isConnected()) {
+			
+			//attempt login
+			
+			//send requests : 
+			
+			
+	
+			
 			try {
-				messageFromClient = objectInputStream.readLine();
-				broadcastMessage(messageFromClient);
+				Request incomingRequest = (Request)objectInputStream.readObject();
+				//need method to deal with request instead of broadcastMessage
 				
-			}catch(IOException e) {
+				switch(incomingRequest.getType()) {
+				case "REQUEST TYPE 1":
+					//cast object to requesttype
+					//deal with request;
+					break;
+				case "REQUEST TYPE 2":
+					//cast object to requesttype 2
+					//deal with request
+					break;
+				case "REQUEST TYPE 3":
+					//cast object to requesttype 3 and deal with request
+					//ResolverequestType3((requestType3)incomingRequest)
+					break;
+				
+				}
+				
+				//broadcastMessage(messageFromClient);
+				
+			}catch(IOException | ClassNotFoundException e) {
 				closeEverything(socket,objectInputStream, objectOutputStream);
 				break;
 			}
 		}
 		
 	}
+	//need resolve function for each class action
+	public void requestResolveRequest (Request request) {
+		//take request and deal with it
+		//break;
+
+		
+	}
+	
 	public void broadcastMessage(String messageToSend) {
-		for(ClientHandler clientHandler : clientHandlers) {
+		//for each person online
+		for(MainClientHandler mainClientHandler : clientHandlers) {
 			try {
-				if(!clientHandler.clientusername.equals(clientusername)) {
-					
-					clientHandler.objectOutputStream.write(messageToSend);
-					clientHandler.objectOutputStream.newLine();
-					clientHandler.objectOutputStream.flush();
-					
+				//for everyone except yourself
+				if(!mainClientHandler.clientusername.equals(clientusername)) {
+					//write message to output stream
+					mainClientHandler.objectOutputStream.writeObject(new TestMessage(messageToSend));
+
 				}
 			}catch(IOException e) {
 				closeEverything(socket, objectInputStream, objectOutputStream);
