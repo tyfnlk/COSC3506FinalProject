@@ -6,7 +6,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ClientHandler implements Runnable{
+public class ClientHandlerMulti implements Runnable{
 //datamembers
 	
 	//static array list of all clients
@@ -20,16 +20,15 @@ public class ClientHandler implements Runnable{
 	
 	
 	//constructor
-	public ClientHandler(Socket socket) {
+	public ClientHandlerMulti(Socket socket) {
 		try {
 			this.socket = socket;
 			
 			//buffered writer to increase efficiency (possibly just buffer the object output stream)
 			
-			this.bufferedWriter = new 
-					BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			
+			this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			
 			this.clientusername = bufferedReader.readLine();
 			clientHandlers.add(this);
 			broadcastMessage("server: <" + clientusername + "> has entered the chat room");
@@ -45,6 +44,7 @@ public class ClientHandler implements Runnable{
 		// TODO Auto-generated method stub
 		//run on separate thread
 		//blocking operation
+		System.out.println("clientHandler run method running");
 		String messageFromClient;
 		
 		//while socket is connected , send messages typed

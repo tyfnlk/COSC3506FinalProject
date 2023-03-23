@@ -19,11 +19,11 @@ public class ServerMulti {
 				Socket socket = ss.accept();
 				
 				
-				ClientHandler clientHandler = new ClientHandler(socket);
+				ClientHandlerMulti clientHandlerMulti = new ClientHandlerMulti(socket);
 				
-				System.out.println("A new client has connected!"+ clientHandler.getClientUsername());
+				System.out.println("A new client has connected!"+ clientHandlerMulti.getClientUsername());
 				
-				Thread thread = new Thread(clientHandler);
+				Thread thread = new Thread(clientHandlerMulti);
 				thread.start();
 			}
 		}catch(IOException e) {
@@ -43,7 +43,7 @@ public class ServerMulti {
 	}
 	public static void main(String[] args) throws IOException {
 		ServerSocket ss = new ServerSocket(1234);
-		MainServer server = new MainServer(ss);
+		ServerMulti server = new ServerMulti(ss);
 		System.out.println("multi server running");
 		server.startServer();
 		
