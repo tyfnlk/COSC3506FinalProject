@@ -7,5 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="multiclienttesting"/>
+	<classpathentry kind="src" path="MultiClientSerialiable testing"/>
+	<classpathentry kind="src" path="UI"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -11,8 +11,8 @@ public class Request implements Serializable{
 	private int requestType;
 	/*
 	 * 0 = empty
-	 * 1
-	 * 2
+	 * 1 = message
+	 * 2 = create
 	 * 3
 	 * 4
 	 * 5

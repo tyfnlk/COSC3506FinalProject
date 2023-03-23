@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -13,9 +15,9 @@ public class ClientHandler implements Runnable{
 	public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 	private Socket socket;
 	//get data
-	private BufferedReader bufferedReader;
+	private ObjectInputStream objectInputStream;
 	//send data
-	private BufferedWriter bufferedWriter;
+	private ObjectOutputStream objectOutputStream;
 	private String clientusername;
 	
 	
@@ -26,15 +28,14 @@ public class ClientHandler implements Runnable{
 			
 			//buffered writer to increase efficiency (possibly just buffer the object output stream)
 			
-			this.bufferedWriter = new 
-					BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream()));
 			
-			this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			this.clientusername = bufferedReader.readLine();
+			this.objectInputStream = new ObjectInputStream(socket.getInputStream()));
+			this.clientusername = objectInputStream.readObject();
 			clientHandlers.add(this);
 			broadcastMessage("server: <" + clientusername + "> has entered the chat room");
 		}catch(IOException e) {
-			closeEverything(socket, bufferedReader, bufferedWriter);
+			closeEverything(socket, objectInputStream, objectOutputStream);
 		}
 	}
 	
@@ -50,11 +51,11 @@ public class ClientHandler implements Runnable{
 		//while socket is connected , listen for message
 		while(socket.isConnected()) {
 			try {
-				messageFromClient = bufferedReader.readLine();
+				messageFromClient = objectInputStream.readLine();
 				broadcastMessage(messageFromClient);
 				
 			}catch(IOException e) {
-				closeEverything(socket,bufferedReader, bufferedWriter);
+				closeEverything(socket,objectInputStream, objectOutputStream);
 				break;
 			}
 		}
@@ -65,13 +66,13 @@ public class ClientHandler implements Runnable{
 			try {
 				if(!clientHandler.clientusername.equals(clientusername)) {
 					
-					clientHandler.bufferedWriter.write(messageToSend);
-					clientHandler.bufferedWriter.newLine();
-					clientHandler.bufferedWriter.flush();
+					clientHandler.objectOutputStream.write(messageToSend);
+					clientHandler.objectOutputStream.newLine();
+					clientHandler.objectOutputStream.flush();
 					
 				}
 			}catch(IOException e) {
-				closeEverything(socket, bufferedReader, bufferedWriter);
+				closeEverything(socket, objectInputStream, objectOutputStream);
 			}
 		}
 		

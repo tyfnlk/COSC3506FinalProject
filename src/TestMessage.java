@@ -1,10 +1,11 @@
 
 public class TestMessage extends Request{
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	String message;
+	private String message;
 	
 	//default constructor sets request type to 0 = null
 	public TestMessage() {
