@@ -8,19 +8,21 @@ public class Server {
 	
 	public ServerSocket ss;
 	
-	//constructor
+	
 	public Server() throws IOException, ClassNotFoundException {
-		//initalize server socket
+		
 		this.ss = new ServerSocket(PORT);
 		// running server
 	}
 	
-	//method to start server	
+		
 	public void startServer() throws IOException, ClassNotFoundException {
 		System.out.println("Server Status: Running...");
 		
-		//continuously allows clients to connect
-		//when a client connects, a thread is created to handle their specific requests (clientHandler)
+		
+		
+		
+		
 		while(!ss.isClosed()) {
 			
 			Socket socket = this.ss.accept(); // blocking function till client connects
@@ -40,7 +42,6 @@ public class Server {
 		//create server
 		Server server = new Server();
 		System.out.println("server Status: Launching...");
-		//start server
 		server.startServer();
 		
 

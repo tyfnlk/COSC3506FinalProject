@@ -4,6 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ClientHandler implements Runnable{
 	private Socket client;
@@ -13,60 +14,82 @@ public class ClientHandler implements Runnable{
 	
 	
 	
-	//constructor
 	public ClientHandler(Socket clientSocket) throws IOException {
-		//set the client socket
 		this.client = clientSocket;
-		//initialize object input and output streams
 		in = new ObjectInputStream(client.getInputStream());
 		out = new ObjectOutputStream(client.getOutputStream());
 		
-		// add current client to the static client list
 		clientList.add(this);
-		//notify server that a new client has connected
 		System.out.println("New Client Connected created:");
 		
 	}
 
-//thread process
+
 	@Override
 	public void run() {
-		//constantly read input objects on different thread so blocking does not affect client
+		
 		try {
-		    for(RequestTest request = (RequestTest)in.readObject();; request = (RequestTest)in.readObject())
+		    for(Request request = (Request)in.readObject();; request = (Request)in.readObject())
 		    {
-		         // deal with requests.(switch case methods for each request)
-		    	switch(request.getType()){
-		    	case "Message":
-		    		message(request);
-		    		sendResponse();
-		    		break;
-		    		
-		    	case "case2":
-		    		//case2(request);
-		    		break;
-		    		//repeat for all different types of request and create equivalent function
-		    	
-		    	
-		    	
-		    	
+		         //listen for requests
+		    	switch(request.getType()) {
+		    	case "LoginRequest":
+		    		System.out.println("login request");
+		    		LoginRequest loginRequest = (LoginRequest)request;
+		    		System.out.println("attempting to match credentials");
+		    		attemptLogin(loginRequest);
 		    	}
+
 		    	
 		    }
-		} catch(IOException | ClassNotFoundException ex)
+		} catch(Exception ex)
 		{
 		    //EOF found
 		}
 	
 	}
-	//example of handling 
-	public void message(RequestTest request) {
-		System.out.println(request.getMessage());
-	}
-	//test of sending Request object back to client
+	
 	public void sendResponse() throws IOException {
-		RequestTest response = new RequestTest("Youre request has been sorted");
+		Request response = new Request("Youre request has been sorted");
 		out.writeObject(response);
+		
+	}
+	public void attemptLogin(LoginRequest loginRequest) throws Exception {
+		//import login credentials into a hashmap
+		HashMap<String,String> lc = new HashMap<String, String>();
+		lc.put("terry", "pass");
+		lc.put("a", "1");
+		lc.put("b", "2");
+		lc.put("c", "3");
+		lc.put("d", "4");
+		System.out.println("attempting login");
+		
+		//check if user exists
+		if(lc.get(loginRequest.getUsername()) == null){
+			//if user does not exist, return false object
+			System.out.println("attempting login invalid user");
+			out.writeObject(new SuccessfulLoginRequest(loginRequest.getUsername(), false,"invalid username"));
+			out.flush();
+			
+			
+			//usermatch found in hashmap, check if password matches
+		} else if(lc.get(loginRequest.getUsername()).contentEquals(loginRequest.getPassword())) {
+			//if password match, return true
+			System.out.println("attempting login success");
+			out.writeObject(new SuccessfulLoginRequest(loginRequest.getUsername(), true,"login successful"));
+			out.flush();
+			System.out.println("succesfullogin packet sent");
+			
+		}else {
+			//if password does not match, return false
+			System.out.println("attempting login invalid pass");
+
+			out.writeObject(new SuccessfulLoginRequest(loginRequest.getUsername(), false,"invalid password"));
+			out.flush();
+		
+		}
+		
+		
 		
 	}
 

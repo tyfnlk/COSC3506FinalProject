@@ -9,30 +9,37 @@ public class Client {
 	private Socket socket;
 	private ObjectOutputStream os;
 	private ObjectInputStream is;
-	private String userName;
+	private boolean certification = false;
 
-	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
-		//create new client
-		Client client = new Client();
-		//start client reciever to recieve objects
-		client.reciever();
-		//testing to send objects
-		while(true) {
-			Scanner scanner = new Scanner(System.in);
-			System.out.println("enter Message: ");
-			String message = scanner.nextLine();
-			
-			client.testMessage(message);
-		}
+	
+
+	public static void main(String[] args) throws Exception {
 		
-		/*
-		 * sent object using 
-		 * this.os.writeObject(msg);
-		 * this.os.reset();
-		 * or
-		 * this.os.flush();
-		 * not sure if reset/flush are necessary
-		 */
+		Client client = new Client();
+		client.reciever();
+		
+		//login
+		Scanner scanner = new Scanner(System.in);
+		
+		boolean result = false;
+		do {
+			System.out.println("enter username : ");
+			String username = scanner.nextLine();
+			
+			System.out.println("enter Password:");
+			String password = scanner.nextLine();
+			
+			client.login(username, password);
+		} 
+		while(!client.certification);
+		System.out.println("login success");
+
+		 
+		
+
+		
+		
+
 
 	}
 	public Client() throws UnknownHostException, IOException, ClassNotFoundException {
@@ -49,7 +56,7 @@ public class Client {
 	}
 	public void testMessage(String hello) throws IOException, ClassNotFoundException {
 
-		RequestTest msg = new RequestTest(hello);
+		Request msg = new Request( hello);
 		
 		this.os.writeObject(msg);
 		this.os.reset();
@@ -63,10 +70,18 @@ public class Client {
 			public void run() {
 				
 				try {
-				    for(RequestTest incoming = (RequestTest)is.readObject();; incoming = (RequestTest)is.readObject())
+				    for(Request incoming = (Request)is.readObject();; incoming = (Request)is.readObject())
 				    {
 				         //Code
-				    	System.out.println(incoming.getMessage());
+				    	System.out.println("package Received");
+				    	
+				    	switch(incoming.getType()) {
+				    	case "SuccessfulLoginRequest":
+				    		System.out.println("package Received in switch case");
+				    		SuccessfulLoginHandler((SuccessfulLoginRequest)incoming);
+				    		System.out.println(certification);
+				    	
+				    	}
 				    }
 				} catch(IOException | ClassNotFoundException ex)
 				{
@@ -79,10 +94,33 @@ public class Client {
 		}).start();
 	}
 	
-	
 	public void close() throws IOException {
 		this.os.close();
 		this.socket.close();
 	}
+	
+	
+	public void login(String username, String password) throws IOException, Exception {
+		// create LoginRequest object
+		LoginRequest loginRequest = new LoginRequest(username, password);
+		
+		//send request to server
+		this.os.writeObject(loginRequest);
+		this.os.reset();
+		//give client time to update certification
+		Thread.sleep(1000);
+		
+	}
+	public void SuccessfulLoginHandler(SuccessfulLoginRequest request) {
+		if(!request.getResult()) {
+			this.certification = false;
+			
+		}else {
+			this.certification=true;
+		}
+		
+		
+		
+	};
 
 }
