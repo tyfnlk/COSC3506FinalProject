@@ -1,4 +1,3 @@
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,13 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ClientHandler implements Runnable{
+//DATA MEMBERS
 	private Socket client;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	public static ArrayList<ClientHandler> clientList = new ArrayList<>();
 	
 	
-	
+//CONSTRUCTOR
 	public ClientHandler(Socket clientSocket) throws IOException {
 		this.client = clientSocket;
 		in = new ObjectInputStream(client.getInputStream());
@@ -23,8 +23,9 @@ public class ClientHandler implements Runnable{
 		System.out.println("New Client Connected created:");
 		
 	}
-
-
+//METHOD
+	
+//Fundamental Methods
 	@Override
 	public void run() {
 		
@@ -52,8 +53,10 @@ public class ClientHandler implements Runnable{
 	public void sendResponse() throws IOException {
 		Request response = new Request("Youre request has been sorted");
 		out.writeObject(response);
-		
 	}
+
+//Request Response Methods
+	
 	public void attemptLogin(LoginRequest loginRequest) throws Exception {
 		//import login credentials into a hashmap
 		HashMap<String,String> lc = new HashMap<String, String>();

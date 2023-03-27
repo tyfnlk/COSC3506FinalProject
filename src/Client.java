@@ -6,63 +6,25 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client {
+//DATA MEMBERS
 	private Socket socket;
 	private ObjectOutputStream os;
 	private ObjectInputStream is;
 	private boolean certification = false;
-
 	
-
-	public static void main(String[] args) throws Exception {
-		
-		Client client = new Client();
-		client.reciever();
-		
-		//login
-		Scanner scanner = new Scanner(System.in);
-		
-		boolean result = false;
-		do {
-			System.out.println("enter username : ");
-			String username = scanner.nextLine();
-			
-			System.out.println("enter Password:");
-			String password = scanner.nextLine();
-			
-			client.login(username, password);
-		} 
-		while(!client.certification);
-		System.out.println("login success");
-
-		 
-		
-
-		
-		
-
-
-	}
+//CONSTRUCTOR
 	public Client() throws UnknownHostException, IOException, ClassNotFoundException {
-		//connect to server
+		//initializes socket
 		this.socket = new Socket("127.0.0.1", Server.PORT);
 
-		//create input/ output streams
-		
+		//initializes input and output streams
 		this.os = new ObjectOutputStream(socket.getOutputStream());
-		
 		this.is = new ObjectInputStream(socket.getInputStream()); 
-
-
 	}
-	public void testMessage(String hello) throws IOException, ClassNotFoundException {
-
-		Request msg = new Request( hello);
-		
-		this.os.writeObject(msg);
-		this.os.reset();
-		System.out.println("test: object sent");
-		
-	}
+	
+//METHODS
+	
+//Fundamental Methods
 	public void reciever() {
 		//create thread
 		new Thread(new Runnable() {
@@ -100,6 +62,19 @@ public class Client {
 	}
 	
 	
+//User Action methods
+	public void testMessage(String hello) throws IOException, ClassNotFoundException {
+		/*
+		 * create Request object, send request object reset buffer
+		 */
+
+		Request msg = new Request( hello);
+		
+		this.os.writeObject(msg);
+		this.os.reset();
+		System.out.println("test: object sent");
+		
+	}	
 	public void login(String username, String password) throws IOException, Exception {
 		// create LoginRequest object
 		LoginRequest loginRequest = new LoginRequest(username, password);
@@ -119,8 +94,44 @@ public class Client {
 			this.certification=true;
 		}
 		
+	}
+	
+	
+	
+	
+	
+	
+//MAIN METHOD
+	/*
+	 * executes when program is run
+	 * creates a new client
+	 * starts client.reciever()
+	 * requires login operation
+	 * 
+	 */
+	public static void main(String[] args) throws Exception {
 		
+		Client client = new Client();
+		client.reciever();
 		
-	};
+		//login
+		Scanner scanner = new Scanner(System.in);
+		
+		boolean result = false;
+		do {
+			System.out.println("enter username : ");
+			String username = scanner.nextLine();
+			
+			System.out.println("enter Password:");
+			String password = scanner.nextLine();
+			
+			client.login(username, password);
+		} 
+		while(!client.certification);
+		System.out.println("login success");
+
+		 
+
+	}
 
 }
